@@ -18,7 +18,9 @@
 * src/java/imageLoader.java<br>
 加载图片资源。（包含基本的图片压缩）
 * src/java/pngAnimView.java<br>
-调取png序列图并以动画形式播放
+调取png序列图并以动画形式播放(所有帧放在一张资源图的形式)
+* src/java/pngAnimView2.java<br>
+调取png序列图并以动画形式播放(每帧一张资源图的形式)
 * src/java/mathFactory.java<br>
 转换工具。包括时间格式、单位、文件大小格式转换，时间差计算等
 * src/drawable/ 和 src/layout/<br>
