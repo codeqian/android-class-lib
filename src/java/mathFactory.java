@@ -1,12 +1,16 @@
 package com.boosj.math;
 
+import android.util.Log;
+
 import com.boosj.Common.Stringcommon;
 import com.boosj.bean.Userinfo;
 import com.boosj.config.deviceInfo;
 
+import java.lang.reflect.Array;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
@@ -18,7 +22,7 @@ import java.util.regex.Pattern;
  * Created by QZD on 2015/2/26.
  */
 public class mathFactory {
-    private static String tKey="01136c5948d353b1bg2";//获取hls时用的校验key
+    private static String[] tKey={"01136c5948d353b1bg2","01136c5948d353b1bg2rfj"};//获取hls时用的校验key.获取下载时用的校验key
     //将毫秒转换为小时：分钟：秒格式
     public static String ms2HMS(int _ms){
         String HMStime;
@@ -45,13 +49,13 @@ public class mathFactory {
     //将毫秒转换为标准日期格式
     public static String ms2Date(long _ms){
         Date date = new Date(_ms);
-        SimpleDateFormat format = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss", Locale.getDefault());
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
         return format.format(date);
     }
 
     public static String ms2DateOnlyDay(long _ms){
         Date date = new Date(_ms);
-        SimpleDateFormat format = new SimpleDateFormat("yyyy.MM.dd", Locale.getDefault());
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         return format.format(date);
     }
 
@@ -204,8 +208,8 @@ public class mathFactory {
         return htmlStr;
     }
 
-    public static String md5Encode(String _vid){
-        String string4md5=_vid+tKey;
+    public static String md5Encode(String _vid,int _index){
+        String string4md5=_vid+tKey[_index];
         try {
             MessageDigest bmd5 = MessageDigest.getInstance("MD5");
             bmd5.update(string4md5.getBytes());
@@ -265,18 +269,19 @@ public class mathFactory {
     public static String getDeviceToken(){
         String _t="";
         String _t2hash="";
-        String[] KEY_FOR_HASH={"bm","bn","cv","dt","lat","lon","nt","os","osv","t"};
+        String[] KEY_FOR_HASH={"an","bm","bn","cv","dt","lat","lon","nt","os","osv","t"};
         Date nowDate=new Date();
         String[] keys={
-                deviceInfo.getPhoneModel().replace(" ", ""),
-                deviceInfo.getBrand().replace(" ", ""),
-                deviceInfo.appVersion.replace(" ", ""),
-                deviceInfo.device_token.replace(" ", ""),
+                "gcwapp",
+                deviceInfo.getPhoneModel(),
+                deviceInfo.getBrand(),
+                deviceInfo.appVersion,
+                deviceInfo.device_token,
                 ""+deviceInfo.getLatitude(),
                 ""+deviceInfo.getLongitude(),
-                deviceInfo.getNetTypeString().replace(" ", ""),
+                deviceInfo.getNetTypeString(),
                 "android",
-                deviceInfo.getOsVer().replace(" ", ""),
+                deviceInfo.getOsVer(),
                 ""+nowDate.getTime()};
         for(int i=0;i<KEY_FOR_HASH.length;i++){
             if(!keys[i].equals("")){
@@ -328,16 +333,17 @@ public class mathFactory {
     }
 
     /**
-     * 索引值
+     * 移除不可见字符
+     * @param str
+     * @return
      */
-    public static int indexOf(String[] _array, String _n){
-        int _index=0;
-        for(int i=0;i<_array.length;i++){
-            if(_array[i].equals(_n)){
-                _index=i;
-                break;
-            }
+    public static String replaceBlank(String str) {
+        String dest = "";
+        if (str!=null) {
+            Pattern p = Pattern.compile("\\s*|\t|\r|\n");
+            Matcher m = p.matcher(str);
+            dest = m.replaceAll("");
         }
-        return _index;
+        return dest;
     }
 }
