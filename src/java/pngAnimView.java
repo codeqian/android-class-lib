@@ -1,16 +1,17 @@
-package com.qzd.view;
+package com.boosj.view;
 
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
-import com.qzd.qzdapp.R;
+import com.boosj.boosjapp.R;
 
 /**
  * png序列图动画类
@@ -36,18 +37,24 @@ public class pngAnimView extends FrameLayout{
         animDrawable=new AnimationDrawable();
     }
 
-    public void setInfo(int _f,int _res) {//参数为帧数和资源图编号
+    public void setInfo(int _f,int _res,boolean isH) {//参数为帧数和资源图编号
         try {
             Resources res = getResources();
             //获取资源图的bitmap
-            BitmapDrawable bmpDraw = (BitmapDrawable) res.getDrawable(R.drawable.loading_icon);
+            BitmapDrawable bmpDraw = (BitmapDrawable) res.getDrawable(_res);
             Bitmap bmp = bmpDraw.getBitmap();
             int _w=bmp.getWidth();
             int _h=bmp.getHeight();
             int _ew = _w / _f;
+            int _eh = _h / _f;
             for (int frame = 0; frame < _f; frame++) {
                 //分解资源图
-                Bitmap bitmap = Bitmap.createBitmap(bmp, frame*_ew, 0, _ew, _h);
+                Bitmap bitmap;
+                if(isH) {
+                    bitmap = Bitmap.createBitmap(bmp, frame * _ew, 0, _ew, _h);
+                }else{
+                    bitmap = Bitmap.createBitmap(bmp, 0, frame * _eh, _w, _eh);
+                }
                 //填充每帧图片
                 animDrawable.addFrame(new BitmapDrawable(null, bitmap), 100);
             }
@@ -70,6 +77,27 @@ public class pngAnimView extends FrameLayout{
         try {
             animDrawable.stop();
         }catch (Exception e){
+        }
+    }
+
+    private void tryRecycleAnimationDrawable(AnimationDrawable animationDrawables) {
+        if (animationDrawables != null) {
+            animationDrawables.stop();
+            for (int i = 0; i < animationDrawables.getNumberOfFrames(); i++) {
+                Drawable frame = animationDrawables.getFrame(i);
+                if (frame instanceof BitmapDrawable) {
+                    ((BitmapDrawable) frame).getBitmap().recycle();
+                }
+                frame.setCallback(null);
+            }
+            animationDrawables.setCallback(null);
+        }
+    }
+
+    public void releaseBitmap(boolean force){
+        tryRecycleAnimationDrawable(animDrawable);
+        if(force){
+            System.gc();
         }
     }
 }

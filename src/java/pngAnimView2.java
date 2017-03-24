@@ -5,6 +5,7 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.FrameLayout;
@@ -70,6 +71,27 @@ public class pngAnimView2 extends FrameLayout{
         try {
             animDrawable.stop();
         }catch (Exception e){
+        }
+    }
+
+    private void tryRecycleAnimationDrawable(AnimationDrawable animationDrawables) {
+        if (animationDrawables != null) {
+            animationDrawables.stop();
+            for (int i = 0; i < animationDrawables.getNumberOfFrames(); i++) {
+                Drawable frame = animationDrawables.getFrame(i);
+                if (frame instanceof BitmapDrawable) {
+                    ((BitmapDrawable) frame).getBitmap().recycle();
+                }
+                frame.setCallback(null);
+            }
+            animationDrawables.setCallback(null);
+        }
+    }
+
+    public void releaseBitmap(boolean force){
+        tryRecycleAnimationDrawable(animDrawable);
+        if(force){
+            System.gc();
         }
     }
 }
