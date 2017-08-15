@@ -3,6 +3,8 @@
 ###目录
 * src/asynctask<br>
 线程扩展
+* src/java/MemoryCache.java<br>
+缓存
 * src/java/CircleImageView.java<br>
 圆形图标，背景不透明
 * src/java/ClipCircleImageView.java<br>
