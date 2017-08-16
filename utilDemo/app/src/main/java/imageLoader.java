@@ -209,7 +209,13 @@ public class imageLoader {
         return null;
     }
 
-    //计算缩放量
+    /**
+     * 计算缩放量
+     * @param options
+     * @param reqWidth
+     * @param reqHeight
+     * @return
+     */
     public static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight){
         final int height = options.outHeight;
         final int width = options.outWidth;
