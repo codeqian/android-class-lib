@@ -1,4 +1,4 @@
-package com.boosj.view;
+package util;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -11,7 +11,7 @@ import android.view.LayoutInflater;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
-import com.boosj.babyapp.R;
+import com.example.qzd.utildemo.R;
 
 /**
  * png序列图动画类(每帧一张图的资源形式)

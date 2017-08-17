@@ -1,4 +1,4 @@
-package com.qzd.view;
+package util;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -8,6 +8,8 @@ import android.graphics.Path;
 import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.widget.ImageView;
+
+import values.color;
 
 /**
  * 圆形图片，图片外填充背景色，背景不透明，低版本系统可用

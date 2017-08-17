@@ -1,21 +1,17 @@
-package com.boosj.math;
+package math;
 
-import android.util.Log;
-
-import com.boosj.Common.Stringcommon;
-import com.boosj.bean.Userinfo;
-import com.boosj.config.deviceInfo;
-
-import java.lang.reflect.Array;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import bean.Userinfo;
+import config.deviceInfo;
+import util.Stringcommon;
 
 /**
  * 转换数字格式
@@ -30,15 +26,15 @@ public class mathFactory {
         int hour=_ms/3600;
         int mint=(_ms%3600)/60;
         int sed=_ms%60;
-        String hourStr=String.valueOf(hour);
+        String hourStr= String.valueOf(hour);
         if(hour<10){
             hourStr="0"+hourStr;
         }
-        String mintStr=String.valueOf(mint);
+        String mintStr= String.valueOf(mint);
         if(mint<10){
             mintStr="0"+mintStr;
         }
-        String sedStr=String.valueOf(sed);
+        String sedStr= String.valueOf(sed);
         if(sed<10){
             sedStr="0"+sedStr;
         }
@@ -49,13 +45,13 @@ public class mathFactory {
     //将毫秒转换为标准日期格式
     public static String ms2Date(long _ms){
         Date date = new Date(_ms);
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+        SimpleDateFormat format = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss", Locale.getDefault());
         return format.format(date);
     }
 
     public static String ms2DateOnlyDay(long _ms){
         Date date = new Date(_ms);
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        SimpleDateFormat format = new SimpleDateFormat("yyyy.MM.dd", Locale.getDefault());
         return format.format(date);
     }
 
@@ -76,34 +72,34 @@ public class mathFactory {
 
     //将大于1万的数字转换为万为单位保留一位小数
     public static String changeCountFormat(String _count){
-        int _ct=Integer.valueOf(_count).intValue();
+        int _ct= Integer.valueOf(_count).intValue();
         String countStr="";
         float _cf=0;
         if(_ct<10000){
             return _count;
         }else{
             _cf=((float) _ct)/ 10000;
-            countStr=String.format("%.1f", _cf)+"万";
+            countStr= String.format("%.1f", _cf)+"万";
         }
         return countStr;
     }
 
     //格式化文件大小(参数的单位是kb)
     public static String changeSizeFormat(int _s){
-        int _ct=Integer.valueOf(_s).intValue();
+        int _ct= Integer.valueOf(_s).intValue();
         String _Str="";
         float _cf=0;
         if(_ct<1024){
             return _s+"KB";
         }else{
             _cf=((float) _ct)/1024;
-            _Str=String.format("%.1f", _cf)+"MB";
+            _Str= String.format("%.1f", _cf)+"MB";
         }
         return _Str;
     }
 
     //计算时间差
-    public static  String DateDistance(Date startDate,Date endDate){
+    public static String DateDistance(Date startDate, Date endDate){
         if(startDate == null ||endDate == null){
             return null;
         }
@@ -142,7 +138,7 @@ public class mathFactory {
     }
 
     //计算与当前的时间差
-    public static  String DateDistance2now(long _ms){
+    public static String DateDistance2now(long _ms){
         SimpleDateFormat DateF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         try {
             Long time=new Long(_ms);
@@ -203,12 +199,12 @@ public class mathFactory {
      * @param _info
      * @return
      */
-    public static String reBuildHtml(String _info,String _title){
+    public static String reBuildHtml(String _info, String _title){
         String htmlStr="<html lang='zh-cn'><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"><title>"+_title+"</title></head><body>"+_info+"</body></html>";
         return htmlStr;
     }
 
-    public static String md5Encode(String _vid,int _index){
+    public static String md5Encode(String _vid, int _index){
         String string4md5=_vid+tKey[_index];
         try {
             MessageDigest bmd5 = MessageDigest.getInstance("MD5");
@@ -272,7 +268,7 @@ public class mathFactory {
         String[] KEY_FOR_HASH={"an","bm","bn","cv","dt","lat","lon","nt","os","osv","t"};
         Date nowDate=new Date();
         String[] keys={
-                "gcwapp",
+                "kwapp",
                 deviceInfo.getPhoneModel(),
                 deviceInfo.getBrand(),
                 deviceInfo.appVersion,
@@ -330,6 +326,31 @@ public class mathFactory {
             }
         }
         return strResult;
+    }
+
+    /**
+     *
+     * @param vid
+     * @return
+     */
+    public static String getVideoHash(String vid){
+        String t = vid+"01136c5948d353b1bg2rfj";
+//        t = MD5.hash(t);
+        return "";
+    }
+
+    /**
+     * 索引值
+     */
+    public static int indexOf(String[] _array, String _n){
+        int _index=0;
+        for(int i=0;i<_array.length;i++){
+            if(_array[i].equals(_n)){
+                _index=i;
+                break;
+            }
+        }
+        return _index;
     }
 
     /**

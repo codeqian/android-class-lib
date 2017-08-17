@@ -1,4 +1,4 @@
-package com.qzd.asynctask;
+package asynctask;
 
 public class Utils
 {

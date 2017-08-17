@@ -1,4 +1,4 @@
-package com.qzd.net;
+package util;
 
 import android.content.ContentValues;
 import android.database.Cursor;
@@ -7,15 +7,15 @@ import android.os.Environment;
 import android.os.StatFs;
 import android.util.Log;
 
-import com.qzd.asynctask.Async;
-import com.qzd.asynctask.Utils;
-import com.qzd.math.sqlHelper;
-import com.qzd.values.messageCode;
-
 import org.json.JSONObject;
 
 import java.io.File;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import asynctask.Async;
+import asynctask.Utils;
+import math.sqlHelper;
+import values.messageCode;
 
 /**
  * 下载管理器，二进制流形式
@@ -134,8 +134,6 @@ public class streamDownLoadManager {
                 Log.d("LOGCAT", "downPath:" + (downPath + vid)+"\n"+vid + messageCode.VIDEOFILETYPE);
                 Utils.url[currentFile]=downPath + vid;
                 saveToSDCard(true);
-                //提交下载统计
-                httpData.getDownloadCollect(vid);
                 //保存下载记录到数据库
                 ContentValues cv=new ContentValues();
                 cv.put("vid", vid);

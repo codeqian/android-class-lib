@@ -1,4 +1,4 @@
-package com.qzd.asynctask;
+package asynctask;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,8 +11,8 @@ import java.net.URL;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.qzd.net.streamDownLoadManager;
-import com.qzd.values.messageCode;
+import util.streamDownLoadManager;
+import values.messageCode;
 
 /**
  * 子线程下载器。

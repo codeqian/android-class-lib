@@ -1,3 +1,5 @@
+package util;
+
 import android.graphics.Bitmap;
 
 import java.lang.ref.SoftReference;

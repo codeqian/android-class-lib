@@ -1,4 +1,4 @@
-package com.qzd.net;
+package util;
 
 import android.app.DownloadManager;
 import android.content.ContentValues;
@@ -9,12 +9,12 @@ import android.os.Environment;
 import android.os.StatFs;
 import android.util.Log;
 
-import com.qzd.math.sqlHelper;
-import com.qzd.values.messageCode;
-
 import org.json.JSONObject;
 
 import java.io.File;
+
+import math.sqlHelper;
+import values.messageCode;
 
 /**
  * 下载文件(使用系统downloadManager)
@@ -152,8 +152,6 @@ public class downloadFile {
                 saveToSDCard(imgUrl, vid + messageCode.IMAGEFILETYPE,false);
                 //下载视频
                 saveToSDCard(downPath + vid, vid + messageCode.VIDEOFILETYPE,true);
-                //提交下载统计
-                httpData.getDownloadCollect(vid);
                 //保存下载记录到数据库
                 SQLiteDatabase mDB=downloadDbManager.getWritableDatabase();
                 ContentValues cv=new ContentValues();
