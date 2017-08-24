@@ -25,7 +25,7 @@
 调取png序列图并以动画形式播放(每帧一张资源图的形式)
 * src/java/util/mathFactory.java<br>
 转换工具。包括时间格式、单位、文件大小格式转换，时间差计算等
-* src/java/util/SeekBarPressure.java
+* src/java/util/SeekBarPressure.java<br>
 双向选择起始和结束的进度条
 * src/drawable/ 和 src/layout/<br>
 资源及布局文件
