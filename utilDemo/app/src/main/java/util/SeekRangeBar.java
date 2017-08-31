@@ -5,20 +5,22 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
+import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+
 
 import com.example.qzd.utildemo.R;
 
 import java.math.BigDecimal;
 
 /**
- * 双向滑块的进度条
+ * 双向滑块的进度条（区域选择）
  */
-public class SeekBarPressure extends View {
-    private static final String TAG = "SeekBarPressure";
+public class SeekRangeBar extends View {
+    private Context _context;
     private static final int CLICK_ON_LOW = 1;        //手指在前滑块上滑动
     private static final int CLICK_ON_HIGH = 2;       //手指在后滑块上滑动
     private static final int CLICK_IN_LOW_AREA = 3;   //手指点击离前滑块近
@@ -43,19 +45,24 @@ public class SeekBarPressure extends View {
     private double defaultScreenLow = 0;    //默认前滑块位置百分比
     private double defaultScreenHigh = 100;  //默认后滑块位置百分比
     private OnSeekBarChangeListener mBarChangeListener;
-    private boolean editable=false;
-    public SeekBarPressure(Context context) {
+    private boolean editable=false;//是否处于可编辑状态
+    private int miniGap=5;//AB的最小间隔
+    private double progressLow;//起点(百分比)
+    private double progressHigh;//终点
+
+    public SeekRangeBar(Context context) {
         this(context, null);
     }
-    public SeekBarPressure(Context context, AttributeSet attrs) {
+    public SeekRangeBar(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
-    public SeekBarPressure(Context context, AttributeSet attrs, int defStyle) {
+    public SeekRangeBar(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        notScrollBarBg = getResources().getDrawable(R.mipmap.hp_wbf, null);
-        hasScrollBarBg = getResources().getDrawable(R.mipmap.hp_wbf, null);
-        mThumbLow = getResources().getDrawable(R.mipmap.hp_a, null);
-        mThumbHigh = getResources().getDrawable(R.mipmap.hp_b, null);
+        _context=context;
+        notScrollBarBg = ContextCompat.getDrawable(_context, R.mipmap.hp_wbf);
+        hasScrollBarBg = ContextCompat.getDrawable(_context,R.mipmap.hp_ybf);
+        mThumbLow = ContextCompat.getDrawable(_context,R.mipmap.hp_a);
+        mThumbHigh = ContextCompat.getDrawable(_context,R.mipmap.hp_b);
         mThumbLow.setState(STATE_NORMAL);
         mThumbHigh.setState(STATE_NORMAL);
         //设置滑动条高度
@@ -98,13 +105,15 @@ public class SeekBarPressure extends View {
         int top = mThumbMarginTop + mThumbWidth / 2 - mScollBarHeight / 2;
         int bottom = top + mScollBarHeight;
 
-        //白色滑动条，两个滑块各两边部分
-        notScrollBarBg.setBounds(mThumbWidth / 2, top, mScollBarWidth - mThumbWidth / 2, bottom);
-        notScrollBarBg.draw(canvas);
+        if(editable) {//仅可编辑状态下显示进度条
+            //白色滑动条，两个滑块各两边部分
+            notScrollBarBg.setBounds(mThumbWidth / 2, top, mScollBarWidth - mThumbWidth / 2, bottom);
+            notScrollBarBg.draw(canvas);
 
-        //红色滑动条，两个滑块中间部分
-        hasScrollBarBg.setBounds((int) mOffsetLow, top, (int) mOffsetHigh, bottom);
-        hasScrollBarBg.draw(canvas);
+            //红色滑动条，两个滑块中间部分
+            hasScrollBarBg.setBounds((int) mOffsetLow, top, (int) mOffsetHigh, bottom);
+            hasScrollBarBg.draw(canvas);
+        }
 
         //前滑块
         mThumbLow.setBounds((int) (mOffsetLow - mThumbWidth / 2), mThumbMarginTop, (int) (mOffsetLow + mThumbWidth / 2), mThumbWidth + mThumbMarginTop);
@@ -115,8 +124,8 @@ public class SeekBarPressure extends View {
         mThumbHigh.draw(canvas);
 
         //当前滑块刻度
-        double progressLow = formatInt((mOffsetLow - mThumbWidth / 2) * 100 / mDistance);
-        double progressHigh = formatInt((mOffsetHigh - mThumbWidth / 2) * 100 / mDistance);
+        progressLow = formatInt((mOffsetLow - mThumbWidth / 2) * 100 / mDistance);
+        progressHigh = formatInt((mOffsetHigh - mThumbWidth / 2) * 100 / mDistance);
         canvas.drawText((int) progressLow + "", (int) mOffsetLow - 2 - 2, mTextViewMarginTop, text_Paint);
         canvas.drawText((int) progressHigh + "", (int) mOffsetHigh - 2, mTextViewMarginTop, text_Paint);
 
@@ -192,19 +201,21 @@ public class SeekBarPressure extends View {
             refresh();
             //抬起
         } else if (e.getAction() == MotionEvent.ACTION_UP) {
+            Log.d("LOGCAT","ACTION UP:"+progressHigh+"-"+progressLow);
             mThumbLow.setState(STATE_NORMAL);
             mThumbHigh.setState(STATE_NORMAL);
+            if(miniGap>0 && progressHigh<progressLow+miniGap){
+                progressHigh=progressLow+miniGap;
+                this.defaultScreenHigh = progressHigh;
+                mOffsetHigh = formatInt(progressHigh / 100 * (mDistance)) + mThumbWidth / 2;
+                refresh();
+            }
         }
         return true;
     }
 
     public void setEditable(boolean _b){
         editable=_b;
-        if(editable){
-            hasScrollBarBg = getResources().getDrawable(R.mipmap.hp_ybf, null);
-        }else{
-            hasScrollBarBg = getResources().getDrawable(R.mipmap.hp_wbf, null);
-        }
         refresh();
         Log.d("LOGCAT","editable:"+editable);
     }
@@ -258,7 +269,7 @@ public class SeekBarPressure extends View {
     //回调函数，在滑动时实时调用，改变输入框的值
     public interface OnSeekBarChangeListener {
         //滑动时
-        public void onProgressChanged(SeekBarPressure seekBar, double progressLow, double progressHigh);
+        public void onProgressChanged(SeekRangeBar seekBar, double progressLow, double progressHigh);
     }
 
     //设置滑动结果为整数
