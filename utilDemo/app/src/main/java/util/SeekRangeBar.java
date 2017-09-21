@@ -11,7 +11,6 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
-
 import com.example.qzd.utildemo.R;
 
 import java.math.BigDecimal;
@@ -59,8 +58,8 @@ public class SeekRangeBar extends View {
     public SeekRangeBar(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         _context=context;
-        notScrollBarBg = ContextCompat.getDrawable(_context, R.mipmap.hp_wbf);
-        hasScrollBarBg = ContextCompat.getDrawable(_context,R.mipmap.hp_ybf);
+        notScrollBarBg = ContextCompat.getDrawable(_context,R.mipmap.hp_wbf);
+        hasScrollBarBg = ContextCompat.getDrawable(_context, R.mipmap.hp_ybf);
         mThumbLow = ContextCompat.getDrawable(_context,R.mipmap.hp_a);
         mThumbHigh = ContextCompat.getDrawable(_context,R.mipmap.hp_b);
         mThumbLow.setState(STATE_NORMAL);
@@ -71,12 +70,15 @@ public class SeekRangeBar extends View {
         mThumbWidth = mThumbLow.getIntrinsicWidth();
     }
 
-    //默认执行，测量出view的宽高,在onDraw()之前
+    /**
+     * 测量view尺寸（在onDraw()之前）
+     * @param widthMeasureSpec
+     * @param heightMeasureSpec
+     */
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        //获取view的总宽度
         int width = MeasureSpec.getSize(widthMeasureSpec);
         mScollBarWidth = width;
-        if(mDistance==0) {//初始状态复制一次就可以了
+        if(mDistance==0) {//只是初始化的时候测量
             mOffsetLow = mThumbWidth / 2;
             mOffsetHigh = width - mThumbWidth / 2;
         }
@@ -139,7 +141,6 @@ public class SeekRangeBar extends View {
         if(!editable) {
             return false;
         }
-        //按下
         if (e.getAction() == MotionEvent.ACTION_DOWN) {
             mFlag = getAreaFlag(e);
             if (mFlag == CLICK_ON_LOW) {
@@ -169,8 +170,7 @@ public class SeekRangeBar extends View {
             }
             //更新滑块
             Log.d("LOGCAT","refresh down");
-            refresh();
-            //移动move
+            invalidate();
         } else if (e.getAction() == MotionEvent.ACTION_MOVE) {
             if (mFlag == CLICK_ON_LOW) {
                 if (e.getX() < 0 || e.getX() <= mThumbWidth / 2) {
@@ -198,8 +198,7 @@ public class SeekRangeBar extends View {
                 }
             }
             //更新滑块
-            refresh();
-            //抬起
+            invalidate();
         } else if (e.getAction() == MotionEvent.ACTION_UP) {
             Log.d("LOGCAT","ACTION UP:"+progressHigh+"-"+progressLow);
             mThumbLow.setState(STATE_NORMAL);
@@ -208,19 +207,27 @@ public class SeekRangeBar extends View {
                 progressHigh=progressLow+miniGap;
                 this.defaultScreenHigh = progressHigh;
                 mOffsetHigh = formatInt(progressHigh / 100 * (mDistance)) + mThumbWidth / 2;
-                refresh();
+                invalidate();
             }
         }
         return true;
     }
 
+    /**
+     * 设置是否可编辑状态
+     * @param _b
+     */
     public void setEditable(boolean _b){
         editable=_b;
-        refresh();
+        invalidate();
         Log.d("LOGCAT","editable:"+editable);
     }
 
-    //获取当前手指位置
+    /**
+     * 获取当前手指位置
+     * @param e
+     * @return
+     */
     public int getAreaFlag(MotionEvent e) {
         int top = mThumbMarginTop;
         int bottom = mThumbWidth + mThumbMarginTop;
@@ -243,36 +250,47 @@ public class SeekRangeBar extends View {
         }
     }
 
-    //更新滑块
-    private void refresh() {
-        invalidate();
-    }
-
-    //设置前滑块的值
+    /**
+     * 设置前滑块的值
+     * @param progressLow
+     */
     public void setProgressLow(double progressLow) {
         this.defaultScreenLow = progressLow;
         mOffsetLow = formatInt(progressLow / 100 * (mDistance)) + mThumbWidth / 2;
-        refresh();
+        invalidate();
     }
 
-    //设置后滑块的值
+    /**
+     * 设置后滑块的值
+     * @param progressHigh
+     */
     public void setProgressHigh(double progressHigh) {
         this.defaultScreenHigh = progressHigh;
         mOffsetHigh = formatInt(progressHigh / 100 * (mDistance)) + mThumbWidth / 2;
-        refresh();
+        invalidate();
     }
 
+    /**
+     * 设置滑动监听
+     * @param mListener
+     */
     public void setOnSeekBarChangeListener(OnSeekBarChangeListener mListener) {
         this.mBarChangeListener = mListener;
     }
 
-    //回调函数，在滑动时实时调用，改变输入框的值
+    /**
+     * 滑动监听，改变输入框的值
+     */
     public interface OnSeekBarChangeListener {
         //滑动时
         public void onProgressChanged(SeekRangeBar seekBar, double progressLow, double progressHigh);
     }
 
-    //设置滑动结果为整数
+    /**
+     * 设置滑动结果为整数
+     * @param value
+     * @return
+     */
     private int formatInt(double value) {
         BigDecimal bd = new BigDecimal(value);
         BigDecimal bd1 = bd.setScale(0, BigDecimal.ROUND_HALF_UP);
