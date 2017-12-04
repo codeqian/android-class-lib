@@ -29,5 +29,7 @@
 双向选择起始和结束的进度条
 * main/java/util/HorizantalFallWaterLayout.java<br>
 横向自动换行布局
+* java/util/ScaleTextView<br>
+自适配TextView
 * src/drawable/ 和 src/layout/<br>
 资源及布局文件
