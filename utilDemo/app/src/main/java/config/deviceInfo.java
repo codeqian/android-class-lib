@@ -102,6 +102,8 @@ public class deviceInfo {
     public static JSONObject getIpInfo(){
         return ipInfoObj;
     }
+    //设计尺寸
+    public static int designedWidth=720;
     public static void setNetType(int _netType){
         Log.d("LOGCAT","netType:"+_netType);
         netType=_netType;

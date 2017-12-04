@@ -11,6 +11,8 @@ import android.widget.TextView;
 
 import com.example.qzd.utildemo.R;
 
+import static config.deviceInfo.designedWidth;
+
 /**
  * Created by QZD on 2017/11/30.
  */
@@ -21,7 +23,9 @@ public class ScaleTextView extends TextView {
         super(context, attrs);
         TypedArray type = context.obtainStyledAttributes(attrs,R.styleable.ScaleTextView);//获得属性值
         int i = type.getInteger(R.styleable.ScaleTextView_textSizePx, 25);
-        baseScreenHeight = type.getInteger(R.styleable.ScaleTextView_baseScreenHeight, 720);
+        Log.d("LOGCAT","i:"+i);
+        baseScreenHeight = type.getInteger(R.styleable.ScaleTextView_baseScreenHeight, designedWidth);
+        Log.d("LOGCAT","baseScreenHeight:"+baseScreenHeight);
         setTextSize(TypedValue.COMPLEX_UNIT_PX, getFontSize(i));
     }
 
@@ -35,7 +39,6 @@ public class ScaleTextView extends TextView {
         WindowManager windowManager = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
         windowManager.getDefaultDisplay().getMetrics(dm);
         int screenHeight = dm.heightPixels;
-        Log.d("LOGCAT","baseScreenHeight"+baseScreenHeight);
         int rate = (int) (textSize * (float) screenHeight / baseScreenHeight);
         return rate;
     }
