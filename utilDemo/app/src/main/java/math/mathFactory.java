@@ -1,5 +1,7 @@
 package math;
 
+import android.content.Context;
+
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
@@ -366,5 +368,55 @@ public class mathFactory {
             dest = m.replaceAll("");
         }
         return dest;
+    }
+
+    /**
+     * 将px值转换为dip或dp值
+     * @param pxValue
+     * @return
+     */
+    public static int px2dip(Context context, float pxValue) {
+        final float scale = context.getResources().getDisplayMetrics().density;
+        return (int) (pxValue / scale + 0.5f);
+    }
+
+    /**
+     * 将dip或dp值转换为px值
+     *
+     * @param dipValue
+     * @return
+     */
+    public static int dip2px(Context context, float dipValue) {
+        final float scale = context.getResources().getDisplayMetrics().density;
+        return (int) (dipValue * scale + 0.5f);
+    }
+
+    /**
+     * 将px值转换为sp值
+     * @param pxValue
+     * @return
+     */
+    public static int px2sp(Context context, float pxValue) {
+        final float fontScale = context.getResources().getDisplayMetrics().scaledDensity;
+        return (int) (pxValue / fontScale + 0.5f);
+    }
+
+    /**
+     * 将sp值转换为px值
+     * @param spValue
+     * @return
+     */
+    public static int sp2px(Context context, float spValue) {
+        final float fontScale = context.getResources().getDisplayMetrics().scaledDensity;
+        return (int) (spValue * fontScale + 0.5f);
+    }
+
+    /**
+     * 计算设计图标注尺寸在屏幕上的实际px值
+     * @return
+     */
+    public static int realPx(int _size, int _designWidth, int _realWidth){
+        int _realPx=(int) (_size * (float) _realWidth / _designWidth);
+        return _realPx;
     }
 }

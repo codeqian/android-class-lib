@@ -2,12 +2,12 @@ package util;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.support.v7.widget.AppCompatTextView;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.WindowManager;
-import android.widget.TextView;
 
 import com.example.qzd.utildemo.R;
 
@@ -17,7 +17,7 @@ import static config.deviceInfo.designedWidth;
  * Created by QZD on 2017/11/30.
  */
 
-public class ScaleTextView extends TextView {
+public class ScaleTextView extends AppCompatTextView {
     private int baseScreenHeight = 720;
     public ScaleTextView(Context context, AttributeSet attrs) {
         super(context, attrs);
