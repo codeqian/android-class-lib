@@ -3,5 +3,6 @@
     <declare-styleable name="ScaleTextView">
         <attr name="baseScreenHeight" format="integer"/>
         <attr name="textSizePx" format="integer" />
+        <attr name="textBold" format="boolean" />
     </declare-styleable>
 </resources>

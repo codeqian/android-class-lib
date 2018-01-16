@@ -27,6 +27,8 @@ public class ScaleTextView extends AppCompatTextView {
         baseScreenHeight = type.getInteger(R.styleable.ScaleTextView_baseScreenHeight, designedWidth);
         Log.d("LOGCAT","baseScreenHeight:"+baseScreenHeight);
         setTextSize(TypedValue.COMPLEX_UNIT_PX, getFontSize(i));
+        boolean _isBold=type.getBoolean(R.styleable.ScaleTextView_textBold, false);
+        getPaint().setFakeBoldText(_isBold);
     }
 
     /**
