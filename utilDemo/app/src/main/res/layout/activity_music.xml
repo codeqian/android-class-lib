@@ -18,8 +18,18 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
     <Button
-        android:id="@+id/playAtServiceBtn"
-        android:text="播放"
+        android:id="@+id/playBtn"
+        android:text="play"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    <Button
+        android:id="@+id/pauseBtn"
+        android:text="pause"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    <Button
+        android:id="@+id/stopBtn"
+        android:text="stop"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 </LinearLayout>

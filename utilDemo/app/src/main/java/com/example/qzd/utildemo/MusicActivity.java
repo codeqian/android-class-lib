@@ -2,8 +2,6 @@ package com.example.qzd.utildemo;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.media.AudioManager;
-import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -15,11 +13,9 @@ import android.widget.TextView;
 import util.FileUtil;
 
 public class MusicActivity extends AppCompatActivity {
-    private Button selectBtn,playAtServiceBtn;
+    private Button selectBtn,playBtn,pauseBtn,stopBtn;
     private TextView info_t;
     private String filePath;
-
-    private MediaPlayer mPlayer = null;
 
     private final String TAG="MUSIC PAGE LOGCAT";
 
@@ -30,10 +26,14 @@ public class MusicActivity extends AppCompatActivity {
 
         info_t=findViewById(R.id.info_t);
         selectBtn=findViewById(R.id.selectBtn);
-        playAtServiceBtn=findViewById(R.id.playAtServiceBtn);
+        playBtn=findViewById(R.id.playBtn);
+        pauseBtn=findViewById(R.id.pauseBtn);
+        stopBtn=findViewById(R.id.stopBtn);
         selectBtn=findViewById(R.id.selectBtn);
         selectBtn.setOnClickListener(btnClick);
-        playAtServiceBtn.setOnClickListener(btnClick);
+        playBtn.setOnClickListener(btnClick);
+        pauseBtn.setOnClickListener(btnClick);
+        stopBtn.setOnClickListener(btnClick);
     }
 
     private View.OnClickListener btnClick = new View.OnClickListener() {
@@ -41,14 +41,18 @@ public class MusicActivity extends AppCompatActivity {
         public void onClick(View view) {
             Intent intent;
             switch (view.getId()){
-                case R.id.selectBtn:
+                case R.id.selectBtn://选择本地文件
                     intent = new Intent();
                     intent.setAction(Intent.ACTION_GET_CONTENT);
                     intent.setType("audio/*");
                     intent.addCategory(Intent.CATEGORY_OPENABLE);
                     startActivityForResult(Intent.createChooser(intent, "Select a File"), 0x1);
                     break;
-                case R.id.playAtServiceBtn:
+                case R.id.playBtn:
+                    break;
+                case R.id.pauseBtn:
+                    break;
+                case R.id.stopBtn:
                     break;
                 default:
                     break;
