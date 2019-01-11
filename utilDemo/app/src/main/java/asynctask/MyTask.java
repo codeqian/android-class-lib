@@ -17,7 +17,7 @@ import java.text.DecimalFormat;
 import bean.Videoinfo;
 import config.deviceInfo;
 import util.DBOService;
-import util.Stringcommon;
+import util.StringCommon;
 
 /**
  * 上传用子线程。
@@ -30,7 +30,7 @@ public class MyTask extends AsyncTask<String, Integer, String> {
     protected void onPostExecute(String result) {
         Log.d("res","result1=="+result);
         // mTvProgress.setText("上传完成");
-        if(Stringcommon.isNotblank(result)){
+        if(StringCommon.isNotblank(result)){
             try {
                 final JSONObject json=new JSONObject(result);
                 final String name= json.getString("name");
@@ -38,14 +38,14 @@ public class MyTask extends AsyncTask<String, Integer, String> {
                 // 取出一个图片名
                 final String imagename=json.getJSONArray("thumbs").getString(0)+"";
                 DBOService.updatestate(name,"1");//改变状态完成
-                for(int i=0;i< Stringcommon.upvideos.size();i++){
-                    if( Stringcommon.upvideos.get(i).getVideoName().equals(name)){
-                        final Videoinfo v= Stringcommon.upvideos.get(i);
-                        Stringcommon.ths.remove(name);
-                        Stringcommon.upvideos.get(i).setJindu("100");
-                        Stringcommon.upvideos.get(i).setIsok("ok");
+                for(int i = 0; i< StringCommon.upvideos.size(); i++){
+                    if( StringCommon.upvideos.get(i).getVideoName().equals(name)){
+                        final Videoinfo v= StringCommon.upvideos.get(i);
+                        StringCommon.ths.remove(name);
+                        StringCommon.upvideos.get(i).setJindu("100");
+                        StringCommon.upvideos.get(i).setIsok("ok");
                         //修改名字
-                        Stringcommon.upvideos.get(i).setVideoName(name+"rnm");
+                        StringCommon.upvideos.get(i).setVideoName(name+"rnm");
                         try {
                             new Thread(){
                                 @Override
@@ -79,7 +79,7 @@ public class MyTask extends AsyncTask<String, Integer, String> {
         Double total=values[3]/1024.0/1024.0;
         DecimalFormat df = new DecimalFormat("#.0");//保留两位小树
         String result=df.format(uped)+"M/"+df.format(total)+"M  ("+jindu+"%)";
-        Stringcommon.upvideos.get(values[1]).setJindu(result+"a"+jindu);
+        StringCommon.upvideos.get(values[1]).setJindu(result+"a"+jindu);
         super.onProgressUpdate(values);
     }
 
@@ -101,7 +101,7 @@ public class MyTask extends AsyncTask<String, Integer, String> {
 //            JSONObject jsonget= UserService.upvideoget(name,size,headstr,uploadurl,token);//获取连接和进度
             int count = 0;
             Log.d("json", "jsonget==" + uploadurl+token);
-            String urlString=uploadurl+"?token="+token+"&size="+size+"&name="+Stringcommon.toURLEncoded(name);
+            String urlString=uploadurl+"?token="+token+"&size="+size+"&name="+StringCommon.toURLEncoded(name);
             try {
                 // 读取文件 已传大小
                 int length = Integer.parseInt(jsonget.getString("start"));
@@ -166,7 +166,7 @@ public class MyTask extends AsyncTask<String, Integer, String> {
                     }
                     dos.flush();
                     if(httpURLConnection.getResponseCode()!=200){
-                        Stringcommon.upvideos.get(po).setIsok("ok");
+                        StringCommon.upvideos.get(po).setIsok("ok");
                         return null;
                     }
                     DataInputStream inStream = new DataInputStream( httpURLConnection.getInputStream() );
@@ -191,7 +191,7 @@ public class MyTask extends AsyncTask<String, Integer, String> {
                 }
                 randomAccessFile.close();
             } catch (Exception e) {
-                Stringcommon.upvideos.get(po).setIsok("ok");
+                StringCommon.upvideos.get(po).setIsok("ok");
                 e.printStackTrace();
             }
         } catch (Exception e) {

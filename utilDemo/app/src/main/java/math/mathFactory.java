@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
 
 import bean.Userinfo;
 import config.deviceInfo;
-import util.Stringcommon;
+import util.StringCommon;
 
 /**
  * 转换数字格式
@@ -235,7 +235,7 @@ public class mathFactory {
     public static String userMd5Encode(Userinfo _user){
         String _head="";
         String _uid="";
-        if(_user!=null && !Stringcommon.isblank(_user.getName()) && Stringcommon.isNotblank(_user.getHead())) {
+        if(_user!=null && !StringCommon.isblank(_user.getName()) && StringCommon.isNotblank(_user.getHead())) {
             _head = _user.getHead();
             _uid = _user.getId();
         }

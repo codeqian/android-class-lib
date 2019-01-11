@@ -62,7 +62,7 @@ public class DBOService {
         }
         cursor.close();
         db.close();
-        if(Stringcommon.isNotblank(v.getAddresspath())){
+        if(StringCommon.isNotblank(v.getAddresspath())){
             return  v;
         }
         return null;

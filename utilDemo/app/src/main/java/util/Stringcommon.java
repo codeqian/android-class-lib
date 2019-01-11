@@ -24,7 +24,7 @@ import bean.Videoinfo;
  * @author zd
  * @Date 2014-12-2
  */
-public class Stringcommon {
+public class StringCommon {
     public static Boolean isgreegps=false;//记录用户是否同意打开定位权限
     public static List<Videoinfo> upvideos=new ArrayList<Videoinfo>();
     public static Map<String,MyTask> ths=new HashMap<String,MyTask>();//正在上传的线程
@@ -154,28 +154,6 @@ public class Stringcommon {
     public static String toIntString(String value) {
         return value.substring(0, value.indexOf("."));
     }
-//固定listview的高度
-//    public static void setListViewHeightBasedOnChildren(ListView listView,boolean _extr) {
-//        ListAdapter listAdapter = listView.getAdapter();
-//        if (listAdapter == null) {
-//            return;
-//        }
-//
-//        int totalHeight = 0;
-//        for (int i = 0; i < listAdapter.getCount(); i++) {
-//            View listItem = listAdapter.getView(i, null, listView);
-//            listItem.measure(0, 0);
-//            totalHeight += listItem.getMeasuredHeight();
-//        }
-//
-//        ViewGroup.LayoutParams params = listView.getLayoutParams();
-//        if(_extr) {
-//            params.height = totalHeight + (listView.getDividerHeight() * (listAdapter.getCount()+1) + 500);
-//        }else{
-//            params.height = totalHeight + (listView.getDividerHeight() * (listAdapter.getCount()+1)+100);
-//        }
-//        listView.setLayoutParams(params);
-//    }
 
     public static void setListViewHeightBasedOnChildren(ListView listView, boolean _extr) {
 
