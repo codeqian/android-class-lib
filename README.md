@@ -31,5 +31,7 @@
 横向自动换行布局
 * java/util/ScaleTextView<br>
 自适配TextView
+* java/util/MusicService.java<br>
+带通知栏的后台音乐播放service
 * src/drawable/ 和 src/layout/<br>
 资源及布局文件
