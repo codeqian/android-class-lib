@@ -2,173 +2,176 @@ package util;
 
 import android.app.Service;
 import android.content.Intent;
-import android.database.Cursor;
+import android.content.ServiceConnection;
 import android.media.MediaPlayer;
-import android.net.Uri;
+import android.os.Binder;
 import android.os.IBinder;
-import android.provider.MediaStore;
-import android.widget.Toast;
+import android.support.annotation.Nullable;
+import android.util.Log;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MusicService extends Service {
-    // 定义需要显示的音乐的字段
-    String[] mCursorCols = new String[] {
-            "audio._id AS _id", // index must match IDCOLIDX below
-            MediaStore.Audio.Media.ARTIST, MediaStore.Audio.Media.ALBUM,
-            MediaStore.Audio.Media.TITLE, MediaStore.Audio.Media.DATA,
-            MediaStore.Audio.Media.MIME_TYPE, MediaStore.Audio.Media.ALBUM_ID,
-            MediaStore.Audio.Media.ARTIST_ID, MediaStore.Audio.Media.DURATION };
-    private MediaPlayer mMediaPlayer; // 声明播放器
-    private Cursor mCursor; // 声明游标
-    private int mPlayPosition = 0; // 当前播放的歌曲
+    private static final String TAG = "MediaService LOGCAT";
+    private MyBinder mBinder = new MyBinder();
+    //当前歌曲的序号
+    private int i = 0;
+    //歌曲路径
+    private List<String> musicPath = new ArrayList<>();
 
-    // 注册意图，级播放器行为
-    public static final String PLAY_ACTION = "com.wyl.music.PLAY_ACTION";
-    public static final String PAUSE_ACTION = "com.wyl.music.PAUSE_ACTION";
-    public static final String NEXT_ACTION = "com.wyl.music.NEXT_ACTION";
-    public static final String PREVIOUS_ACTION = "com.wyl.music.PREVIOUS_ACTION";
+    public MediaPlayer mMediaPlayer;
 
     public MusicService() {
-    }
-
-    @Override
-    public IBinder onBind(Intent arg0) {
-        return null;
-    }
-
-    @Override
-    public void onCreate() {
-        super.onCreate();
         mMediaPlayer = new MediaPlayer();
-        Uri MUSIC_URL = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-        // 这里我过滤了一下，因为我机里有些音频文件是游戏音频，很短
-        // 我这里作了处理，默认大于10秒的可以看作是系统音乐
-        mCursor = getContentResolver().query(MUSIC_URL, mCursorCols,
-                "duration > 10000", null, null);
+        mMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                //播放完毕
+                stopSelf();
+            }
+        });
+        mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            @Override
+            public void onPrepared(MediaPlayer mp) {
+                Log.d(TAG, "music onPrepared");
+            }
+        });
     }
 
     @Override
-    public void onStart(Intent intent, int startId) {
-        super.onStart(intent, startId);
-        String action = intent.getAction();
-        if (action.equals(PLAY_ACTION)) {//播放
-            play();
-        } else if (action.equals(PAUSE_ACTION)) {//暂停
-            pause();
-        } else if (action.equals(NEXT_ACTION)) {//下一首
-            next();
-        } else if (action.equals(PREVIOUS_ACTION)) {//前一首
-            previous();
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.d(TAG,"startService");
+        return super.onStartCommand(intent, flags, startId);
+    }
+
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        return mBinder;
+    }
+
+    /**
+     * 操作都定义在这里
+     */
+    public class MyBinder extends Binder {
+        public void setUrl(String _url){
+            musicPath.add(_url);
+            iniMediaPlayerFile(i);
+        }
+
+        /**
+         * 播放音乐
+         */
+        public void playMusic() {
+            if (!mMediaPlayer.isPlaying()) {
+                //如果还没开始播放，就开始
+                mMediaPlayer.start();
+            }
+        }
+
+        /**
+         * 暂停播放
+         */
+        public void pauseMusic() {
+            if (mMediaPlayer.isPlaying()) {
+                //如果还没开始播放，就开始
+                mMediaPlayer.pause();
+            }
+        }
+
+        /**
+         * 下一首
+         */
+        public void nextMusic() {
+            if (mMediaPlayer != null && i < 4 && i >= 0) {
+                //切换歌曲reset()很重要很重要很重要，没有会报IllegalStateException
+                mMediaPlayer.reset();
+                iniMediaPlayerFile(i + 1);
+                //这里的if是为了不让歌曲的序号越界，因为只有4首歌
+                if (i == musicPath.size()-1) {
+                } else {
+                    i = i + 1;
+                }
+                playMusic();
+            }
+        }
+
+        /**
+         * 上一首
+         */
+        public void preciousMusic() {
+            if (mMediaPlayer != null && i < 4 && i > 0) {
+                mMediaPlayer.reset();
+                iniMediaPlayerFile(i - 1);
+                if (i == 1) {
+                } else {
+                    i = i - 1;
+                }
+                playMusic();
+            }
+        }
+
+        /**
+         * 关闭播放器
+         */
+        public void closeMedia() {
+            if (mMediaPlayer != null) {
+                mMediaPlayer.stop();
+                mMediaPlayer.release();
+            }
+        }
+
+        /**
+         * 获取歌曲长度
+         **/
+        public int getProgress() {
+            return mMediaPlayer.getDuration();
+        }
+
+        /**
+         * 获取播放位置
+         */
+        public int getPlayPosition() {
+            return mMediaPlayer.getCurrentPosition();
+        }
+
+        /**
+         * 播放指定位置
+         */
+        public void seekToPositon(int msec) {
+            mMediaPlayer.seekTo(msec);
         }
     }
 
     /**
-     * 播放
+     * 添加file文件到MediaPlayer对象并且准备播放音频
      */
-    public void play() {
-        //初始化音乐播放器
-        init();
-    }
-
-    /**
-     * 暂停，结束服务
-     */
-    public void pause() {
-        //暂停音乐播放
-        stopSelf();
-    }
-
-    /**
-     * 上一首
-     */
-    public void previous() {
-        //得到前一首的歌曲
-        if (mPlayPosition == 0) {
-            mPlayPosition = mCursor.getCount() - 1;
-        } else {
-            mPlayPosition--;
-        }
-        //开始播放
-        init();
-    }
-
-    /**
-     * 下一首
-     */
-    public void next() {
-        //得到后一首歌曲
-        if (mPlayPosition == mCursor.getCount() - 1) {
-            mPlayPosition = 0;
-        } else {
-            mPlayPosition++;
-        }
-        //开始播放
-        init();
-    }
-
-    /**
-     * 初始化播放器
-     */
-    public void init() {
-        //充值MediaPlayer
-        mMediaPlayer.reset();
-        // 获取歌曲位置
-        String dataSource = getDateByPosition(mCursor, mPlayPosition);
-        // 歌曲信息
-        String info = getInfoByPosition(mCursor, mPlayPosition);
-        // 用Toast显示歌曲信息
-        Toast.makeText(getApplicationContext(), info, Toast.LENGTH_SHORT)
-                .show();
+    private void iniMediaPlayerFile(int _index) {
         try {
-            // 播放器绑定资源
-            mMediaPlayer.setDataSource(dataSource);
-            // 播放器准备
+            //设置音频文件到MediaPlayer对象中
+            mMediaPlayer.setDataSource(musicPath.get(_index));
             mMediaPlayer.prepare();
-            // 播放
-            mMediaPlayer.start();
-        } catch (IllegalArgumentException e1) {
-            e1.printStackTrace();
-        } catch (IllegalStateException e1) {
-            e1.printStackTrace();
-        } catch (IOException e1) {
-            e1.printStackTrace();
+            Log.d(TAG, "musicPath："+musicPath.get(_index));
+        } catch (IOException e) {
+            Log.d(TAG, "设置资源，准备阶段出错");
+            e.printStackTrace();
         }
     }
 
-    /**
-     * 根据位置来获取歌曲位置
-     * @param c
-     * @param position
-     * @return
-     */
-    public String getDateByPosition(Cursor c, int position) {
-        c.moveToPosition(position);
-        int dataColumn = c.getColumnIndex(MediaStore.Audio.Media.DATA);
-        String data = c.getString(dataColumn);
-        return data;
-    }
-
-    /**
-     * 获取当前播放歌曲演唱者及歌名
-     * @param c
-     * @param position
-     * @return
-     */
-    public String getInfoByPosition(Cursor c, int position) {
-        c.moveToPosition(position);
-        int titleColumn = c.getColumnIndex(MediaStore.Audio.Media.TITLE);
-        int artistColumn = c.getColumnIndex(MediaStore.Audio.Media.ARTIST);
-        String info = c.getString(artistColumn) + " " + c.getString(titleColumn);
-        return info;
-
-    }
-
-    /**
-     * 服务结束时要释放MediaPlayer
-     */
+    @Override
     public void onDestroy() {
-        super.onDestroy();
+        super.onDestroy();//释放资源，不然音乐会继续播放而且无法操作MediaPlayer
+        mMediaPlayer.stop();
         mMediaPlayer.release();
+        mMediaPlayer=null;
+        Log.d(TAG,"destoryed");
+    }
+
+    @Override
+    public void unbindService(ServiceConnection conn) {
+        Log.d(TAG,"unbindService");
+        super.unbindService(conn);
     }
 }

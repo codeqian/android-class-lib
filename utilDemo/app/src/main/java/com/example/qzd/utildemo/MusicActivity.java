@@ -1,9 +1,12 @@
 package com.example.qzd.utildemo;
 
 import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -11,8 +14,12 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import util.FileUtil;
+import util.MusicService;
 
 public class MusicActivity extends AppCompatActivity {
+    private MusicService.MyBinder mMyBinder;
+    private Intent MediaServiceIntent;
+
     private Button selectBtn,playBtn,pauseBtn,stopBtn;
     private TextView info_t;
     private String filePath;
@@ -23,6 +30,11 @@ public class MusicActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_music);
+
+//        绑定service
+        MediaServiceIntent = new Intent(this, MusicService.class);
+        startService(MediaServiceIntent);//先start的话Activity销毁了service还在
+        bindService(MediaServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
 
         info_t=findViewById(R.id.info_t);
         selectBtn=findViewById(R.id.selectBtn);
@@ -49,14 +61,35 @@ public class MusicActivity extends AppCompatActivity {
                     startActivityForResult(Intent.createChooser(intent, "Select a File"), 0x1);
                     break;
                 case R.id.playBtn:
+                    mMyBinder.playMusic();
                     break;
                 case R.id.pauseBtn:
+                    mMyBinder.pauseMusic();
                     break;
                 case R.id.stopBtn:
+                    unbindService(mServiceConnection);
+                    stopService(MediaServiceIntent);//不stop的话service不会销毁
+                    Log.d(TAG,"unbindService!");
                     break;
                 default:
                     break;
             }
+        }
+    };
+
+    /***
+     * 绑定service事件
+     */
+    private ServiceConnection mServiceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            mMyBinder = (MusicService.MyBinder) service;
+            Log.d(TAG, "Service与Activity已连接");
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            Log.d(TAG, "Service与Activity已断开");
         }
     };
 
@@ -71,6 +104,7 @@ public class MusicActivity extends AppCompatActivity {
                 Uri audioUri = data.getData();
                 filePath= FileUtil.getPath(this,audioUri);
                 Log.d(TAG, "path:" + filePath);
+                mMyBinder.setUrl(filePath);
                 if(!filePath.equals("")) {
                     info_t.setText(filePath);
                 }
