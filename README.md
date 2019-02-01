@@ -35,3 +35,5 @@
 带通知栏的后台音乐播放service
 * src/drawable/ 和 src/layout/<br>
 资源及布局文件
+* java/util/bitmapFactory.java/<br>
+Bitmap处理工具，包括裁剪，文字图片合成等
