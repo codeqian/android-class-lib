@@ -37,3 +37,7 @@
 资源及布局文件
 * java/util/bitmapFactory.java/<br>
 Bitmap处理工具，包括裁剪，文字图片合成等
+* java/view/MyGridView.java/<br>
+解决和ScrollView冲突的GridView
+* java/view/MyListView.java/<br>
+解决和ScrollView冲突的MyListView
